@@ -88,8 +88,23 @@ class Player
           this.y = 400;
       }
 
+      // reaching the water will place player back to starting position after 3ms
+      if(this.y < 1)
+      {
+          this.resetPlayer();
+      }
   }
-}
+
+  resetPlayer()
+  {
+    setTimeout(function()
+    {
+      player.x = cellWidth * 2;
+      player.y = 400;
+    }, 300);
+  }
+
+} // end of class Player
 
 // Instantiate the objects
 
