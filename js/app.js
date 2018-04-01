@@ -1,43 +1,107 @@
-// Enemies our player must avoid
-var Enemy = function()
-{
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
+let allEnemies = [];
 
+// canvas graphical dimensions
+const canvasWidth = 505;
+const cellWidth = 101; // width of png images
+const cellHeight = 82; // visible height of png
+
+// Enemies our player must avoid
+class Enemy
+{
+  constructor(x, y)
+  {
+    this.x = x;
+    this.y = y;
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
-};
+  }
 
-// Update the enemy's position, required method for game
-// Parameter: dt, a time delta between ticks
-Enemy.prototype.update = function(dt)
+  // Update the enemy's position, required method for game
+  // Parameter: dt, a time delta between ticks
+  update(dt)
+  {
+      // You should multiply any movement by the dt parameter
+      // which will ensure the game runs at the same speed for
+      // all computers.
+
+  }
+
+  // Draw the enemy on the screen, required method for game
+  render()
+  {
+      ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+  }
+}
+
+
+// Player class
+class Player
 {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
-};
+  constructor(x, y, sprite)
+  {
+    this.x = x;
+    this.y = y;
+    this.sprite = 'images/char-boy.png';
+  }
 
-// Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function()
-{
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
+  update(dt)
+  {
+  }
 
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
+  render()
+  {
+      ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+  }
 
+  handleInput(key) // check keys pressed by player
+  {
+      if(key === "left" && this.x > 0)
+      {
+          this.x -= cellWidth;
+      }
+      else if(key === "left" && this.x < 0)
+      {
+          this.x = 0;
+      }
 
-// Now instantiate your objects.
+      if(key === "right" && this.x < (4 * cellWidth))
+      {
+          this.x += cellWidth;
+      }
+      else if(key === "right" && this.x > (4 * cellWidth))
+      {
+          this.x = 4 * cellWidth;
+      }
+
+      if(key === "up" && this.y > 0)
+      {
+          this.y -= cellHeight;
+      }
+
+      if(key === "down" && this.y < 400)
+      {
+          this.y += cellHeight;
+      }
+      else if(key === "down" && this.y > 400)
+      {
+          this.y = 400;
+      }
+
+  }
+}
+
+// Instantiate the objects
+
 // Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
 
+// new player initial position based on image and canvas size
+const player = new Player(cellWidth * 2, 400);
 
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
-document.addEventListener('keyup', function(e)
+document.addEventListener('keyup', function(evt)
 {
     var allowedKeys = {
         37: 'left',
@@ -46,5 +110,5 @@ document.addEventListener('keyup', function(e)
         40: 'down'
     };
 
-    player.handleInput(allowedKeys[e.keyCode]);
+    player.handleInput(allowedKeys[evt.keyCode]);
 });
