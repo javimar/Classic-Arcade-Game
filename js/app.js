@@ -1,23 +1,34 @@
 let allEnemies = [];
 
-// canvas graphical dimensions
-const canvasWidth = 505;
-const cellWidth = 101; // width of png images
-const cellHeight = 82; // visible height of png
+const CANVAS_WIDTH = 505; // canvas graphical dimensions
+const CELL_WIDTH = 101; // width of png images
+const CELL_HEIGHT = 83; // visible height of png
+const SPRITE_HEIGHT = 70; // height of image
 
-const spriteHeight = 70; // height of image
+// Superclass representing a character
+class Character
+{
+    constructor(x, y, sprite)
+    {
+        this.x = x;
+        this.y = y;
+        this.sprite = sprite;
+    }
+
+    // Draw the character on the screen, required method for game
+    render()
+    {
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    }
+}
 
 // Enemies our player must avoid
-class Enemy
+class Enemy extends Character
 {
-  constructor(x, y, speed)
+  constructor(x, y, speed, sprite = 'images/enemy-bug.png')
   {
-    this.x = x;
-    this.y = y;
-    this.speed = speed;
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
-    this.sprite = 'images/enemy-bug.png';
+      super(x, y, sprite);
+      this.speed = speed;
   }
 
   // Update the enemy's position, required method for game
@@ -31,77 +42,63 @@ class Enemy
 
       // when bugs move out of canvas, place them way back at the beginning
       // and update their speed
-      if(this.x > canvasWidth)
+      if(this.x > CANVAS_WIDTH)
       {
-          this.x = -100;
+          this.x = -CELL_WIDTH;
           this.speed = (Math.random() * 120) + 100;
       }
 
       // handle collision with Player
       if(player.x < this.x + 60 &&
           player.x + 60 > this.x &&
-          player.y < this.y + spriteHeight &&
-      	  player.y + spriteHeight > this.y)
+          player.y < this.y + SPRITE_HEIGHT &&
+      	  player.y + SPRITE_HEIGHT > this.y)
       {
           player.reset();
       }
   }
-
-  // Draw the enemy on the screen, required method for game
-  render()
-  {
-      ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-  }
-}
-
+} // end of Enemy class
 
 // Player class
-class Player
+class Player extends Character
 {
-  constructor(x, y, sprite)
+  constructor(x, y, sprite='images/char-boy.png')
   {
-    this.x = x;
-    this.y = y;
-    this.sprite = 'images/char-boy.png';
+      super(x, y, sprite);
   }
 
   update(dt)
   {
   }
 
-  render()
-  {
-      ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-  }
-
   handleInput(key) // check keys pressed by player
   {
       if(key === "left" && this.x > 0)
       {
-          this.x -= cellWidth;
+          this.x -= CELL_WIDTH;
       }
       else if(key === "left" && this.x < 0)
       {
           this.x = 0;
       }
 
-      if(key === "right" && this.x < (4 * cellWidth))
+      if(key === "right" && this.x < (4 * CELL_WIDTH))
       {
-          this.x += cellWidth;
+          this.x += CELL_WIDTH;
       }
-      else if(key === "right" && this.x > (4 * cellWidth))
+      else if(key === "right" && this.x > (4 * CELL_WIDTH))
       {
-          this.x = 4 * cellWidth;
+          this.x = 4 * CELL_WIDTH;
       }
 
       if(key === "up" && this.y > 0)
       {
-          this.y -= cellHeight;
+          this.y -= CELL_HEIGHT;
       }
 
       if(key === "down" && this.y < 400)
       {
-          this.y += cellHeight;
+          this.y += CELL_HEIGHT;
       }
       else if(key === "down" && this.y > 400)
       {
@@ -119,18 +116,19 @@ class Player
   {
     setTimeout(function()
     {
-      player.x = cellWidth * 2;
+      player.x = CELL_WIDTH * 2;
       player.y = 400;
     }, 300);
   }
 
 } // end of class Player
 
+
 // Instantiate the objects
 const rows = [
-    spriteHeight, spriteHeight+cellHeight, spriteHeight+cellHeight*2,
-    spriteHeight, spriteHeight+cellHeight, spriteHeight+cellHeight*2,
-    spriteHeight, spriteHeight+cellHeight, spriteHeight+cellHeight*2];
+    SPRITE_HEIGHT, SPRITE_HEIGHT + CELL_HEIGHT, SPRITE_HEIGHT + CELL_HEIGHT * 2,
+    SPRITE_HEIGHT, SPRITE_HEIGHT + CELL_HEIGHT, SPRITE_HEIGHT + CELL_HEIGHT * 2,
+    SPRITE_HEIGHT, SPRITE_HEIGHT + CELL_HEIGHT, SPRITE_HEIGHT + CELL_HEIGHT * 2];
 const enemySpeed = (Math.random() * 200) + 50;
 
 rows.forEach(function (yCoord)
@@ -141,7 +139,7 @@ rows.forEach(function (yCoord)
 });
 
 // new player initial position based on image and canvas size
-const player = new Player(cellWidth * 2, 400);
+const player = new Player(CELL_WIDTH * 2, 400);
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
